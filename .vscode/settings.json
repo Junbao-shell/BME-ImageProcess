@@ -1,0 +1,148 @@
+{   
+    "editor.fontSize": 14,
+    "editor.fontFamily": "Consolas, '楷体', monospace",
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 200,
+    "editor.rulers": [120],
+
+    // format
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false,
+    "editor.defaultFormatter": "austin.code-gnu-global",
+    
+
+    "editor.renderWhitespace": "all",
+    "editor.detectIndentation": false,
+    "editor.minimap.enabled": false,
+
+    "files.encoding": "utf8",
+    "files.autoGuessEncoding": false,
+    "files.associations": {
+        "*.cu": "cpp",
+        "*.cuh": "cpp",
+        "cctype": "cpp",
+        "clocale": "cpp",
+        "cmath": "cpp",
+        "csetjmp": "cpp",
+        "csignal": "cpp",
+        "cstdarg": "cpp",
+        "cstddef": "cpp",
+        "cstdio": "cpp",
+        "cstdlib": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "cwchar": "cpp",
+        "cwctype": "cpp",
+        "array": "cpp",
+        "atomic": "cpp",
+        "strstream": "cpp",
+        "*.tcc": "cpp",
+        "bitset": "cpp",
+        "chrono": "cpp",
+        "codecvt": "cpp",
+        "condition_variable": "cpp",
+        "cstdint": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "exception": "cpp",
+        "algorithm": "cpp",
+        "filesystem": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp",
+        "map": "cpp",
+        "memory": "cpp",
+        "memory_resource": "cpp",
+        "numeric": "cpp",
+        "optional": "cpp",
+        "random": "cpp",
+        "ratio": "cpp",
+        "set": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "system_error": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "fstream": "cpp",
+        "initializer_list": "cpp",
+        "iomanip": "cpp",
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "istream": "cpp",
+        "limits": "cpp",
+        "mutex": "cpp",
+        "new": "cpp",
+        "ostream": "cpp",
+        "sstream": "cpp",
+        "stdexcept": "cpp",
+        "streambuf": "cpp",
+        "thread": "cpp",
+        "cinttypes": "cpp",
+        "typeinfo": "cpp",
+        "__nullptr": "cpp",
+        "unordered_set": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp",
+        "slist": "cpp",
+        "__node_handle": "cpp",
+        "__bit_reference": "cpp",
+        "__hash_table": "cpp",
+        "__string": "cpp",
+        "__tree": "cpp",
+        "__split_buffer": "cpp",
+        "queue": "cpp",
+        "stack": "cpp",
+        "locale": "cpp",
+        "*.in": "cpp",
+        "__config": "cpp"
+    },
+
+    "explorer.confirmDragAndDrop": false,
+    "workbench.startupEditor": "none",
+    "workbench.iconTheme": "vscode-icons",
+    "bracketPairColorizer.depreciation-notice": false,
+
+    // CPP
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.vcFormat.newLine.beforeOpenBrace.namespace": "newLine",
+
+    // space
+    "C_Cpp.autoAddFileAssociations": true,
+    "C_Cpp.vcFormat.space.beforeEmptySquareBrackets": false,
+    "C_Cpp.vcFormat.space.beforeOpenSquareBracket": false,
+    "C_Cpp.vcFormat.space.beforeBlockOpenBrace": true,
+    "C_Cpp.vcFormat.space.beforeLambdaOpenParenthesis": true,
+    "C_Cpp.vcFormat.space.betweenEmptyBraces": true,   
+    "C_Cpp.intelliSenseEngine": "Default",
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+
+    "[cmake]": {
+        "editor.wordWrap": "off"
+    },
+
+    // xml & html
+    "[xml]": {
+        "editor.wordWrap": "off"
+    },
+
+    // matlab
+    "[matlab]": {
+        "editor.wordWrap": "off",
+        "editor.tabSize": 4,
+        "editor.defaultFormatter": "AffenWiesel.matlab-formatter"
+    },
+
+    "remote.SSH.remotePlatform": {
+        "192.168.20.146": "linux"
+    },
+
+    "cmake.configureOnOpen": true,
+    "update.mode": "none",
+    "vsicons.dontShowNewVersionMessage": true,
+    "C_Cpp.errorSquiggles": "Enabled"
+}

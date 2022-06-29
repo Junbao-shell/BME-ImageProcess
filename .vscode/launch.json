@@ -1,0 +1,73 @@
+{
+    /**
+    启动配置必须设置 请求类型，属性为 request, 分为 launch 和 attach 
+
+    protocol : 设置调试协议
+        auto: 自动检测目标运行时的协议
+        inspector: 新的V8调试器协议, 
+        legacy: 原始的V8调试协议
+
+    port: 调试使用的端口
+    address: IP地址, 用于远程调试
+
+    localRoot: 远程调试时映射的本地地址 / 本地目录地址
+    remoteRoot: 远程调试时映射的远程地址 / 目录地址
+
+    sourceMaps: 默认为 true
+    outFiles: 当map文件不存在时, 用于指定sourceMaps的位置
+
+    restart: 自动重启调试
+    timeout: 配置自动附加的超时时间
+
+    stopOnEntry: 自动断点到第一行代码处
+    smartStep: 自动跳过未映射到源代码的代码
+    skipFiles: []String 指定跳过单步调试的代码
+
+    trace: 启用诊断输出
+
+    // launch 中专有的配置属性
+    program: 指定调试入口文件地址
+
+    type: 用于启动配置的调试器类型
+
+    cwd: 指定程序启动调试的目录，当vscode启动补录不是项目根目录，并且调试 npm  script 时非常有用
+
+    args: []String: 传递给程序的参数, 可在 process.argv 中拿到
+    runtimeExecutable: 设置运行时可执行文件的目录，默认是node, 可以是其他可执行程序，如npm, nodemon
+    runtimeArgs: 传递给运行时可执行文件的参数
+
+    */
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) 启动",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/UT_Pipeline",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description":  "将反汇编风格设置为 Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        // {
+        //     "name": "CUDA C++: Launch",
+        //     "type": "cuda-gdb",
+        //     "request": "launch",
+        //     "program": "/home/nv/gaojunbao/WorkSpace/pad/build/test/ImageTool"
+        // }
+    ]
+}
