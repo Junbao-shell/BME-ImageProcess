@@ -1,5 +1,7 @@
 # .gitignore
 
+# build 
 /**/build/
 
-
+# software config
+/.vscode/
