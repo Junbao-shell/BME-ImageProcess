@@ -19,6 +19,7 @@
 #include <experimental/filesystem>
 #include <cstring>
 #include <vector>
+#include <tuple>
 #include <cmath>
 #include <limits>
 #include <numeric>
@@ -99,6 +100,84 @@ auto GetRoiStatistic(const float *image, const int image_size, const Point point
     return std::make_pair(roi_mean, roi_std_variance);
 }
 
+std::vector<std::string> GetFileList(const std::string &path)
+{
+    namespace fs = std::experimental::filesystem;
+    if (!fs::exists(path))
+    {
+        std::cout << "image not exist" << std::endl;
+        return std::vector<std::string>{};
+    }
+
+    std::vector<std::string> file_list{};
+
+    fs::directory_iterator end_iterator;
+    for (fs::directory_iterator iter(path); iter != end_iterator; ++iter)
+    {
+        if (!fs::is_regular_file(iter->status()) || iter->path().filename().extension() != ".raw")
+        {
+            continue;
+        }
+        file_list.emplace_back(iter->path());
+    }
+    std::sort(file_list.begin(), file_list.end());
+
+    return file_list;
+}
+
+std::vector<std::string> GetDirList(const std::string &path)
+{
+    namespace fs = std::experimental::filesystem;
+    if (!fs::exists(path))
+    {
+        std::cout << "image not exist" << std::endl;
+        return std::vector<std::string>{};
+    }
+
+    std::vector<std::string> file_list{};
+
+    fs::directory_iterator end_iterator;
+    for (fs::directory_iterator iter(path); iter != end_iterator; ++iter)
+    {
+        if (!fs::is_directory(iter->status()))
+        {
+            continue;
+        }
+        file_list.emplace_back(iter->path());
+    }
+    std::sort(file_list.begin(), file_list.end());
+
+    return file_list;
+}
+
+auto GetCoef(const std::string &str)
+{
+    int pos1 = str.find('_');
+    std::string substr = str.substr(pos1 + 1);
+    int pos2 = substr.find('_');
+    const float bhw = std::stof(substr.substr(0, pos2));
+    
+    substr = substr.substr(pos2 + 1);
+    pos1 = substr.find('_');
+    substr = substr.substr(pos1 + 1);
+    pos2 = substr.find('_');
+    const float asca = std::stof(substr.substr(0, pos2));
+
+    substr = substr.substr(pos2 + 1);
+    pos1 = substr.find('_');
+    substr = substr.substr(pos1 + 1);
+    pos2 = substr.find('_');
+    const float gamma = std::stof(substr.substr(0, pos2));
+
+    substr = substr.substr(pos2 + 1);
+    pos1 = substr.find('_');
+    substr = substr.substr(pos1 + 1);
+    pos2 = substr.find('_');
+    const float lambda = std::stof(substr.substr(0, pos2));
+
+    return std::make_tuple(bhw, asca, gamma, lambda);
+}
+
 /**
  * @brief statistic the ROI value;
  * @note this funciton assumed that the project in the FOV Center
@@ -111,7 +190,6 @@ auto CalculateROI(float *image, const int fov, const int project_diameter)
 {
     const int project_voxel_number_in_diameter = project_diameter / voxel_size;  // water model diameter
     const int roi_radius = std::ceil(project_voxel_number_in_diameter / ratio_roi_project / 2); // ROI radius, unit voxel count
-    std::cout << "roi radius: " << roi_radius << std::endl;
 
     const int boundary_offset_voxel = boundary_offset_distance / voxel_size; // roi to project distance, unit voxel count
     const int center_to_circle_size = std::ceil(project_voxel_number_in_diameter / 2) - boundary_offset_voxel - roi_radius;
@@ -185,44 +263,65 @@ void Binning(const float **image, const int binning_number, const int image_size
     }
 }
 
-namespace fs = std::experimental::filesystem;
 void CT_ImageUniform(const std::string path)
 {
     // image parameters
     const int voxel_num_x = 1024;
     const int image_size = voxel_num_x * voxel_num_x;
     float *image = new float[image_size]();
-
-    if (!fs::exists(path))
-    {
-        std::cout << "image not exist" << std::endl;
-        return;
-    }
+    float *image_bin = new float[image_size]();
 
     FILE *fp;
     std::fstream out;
-    out.open("./ct_water_300_uniform_log.xlsx", std::ios::out | std::ios::app);
+    out.open("./ct_water_300_uniform_log002.xls", std::ios::out | std::ios::app);
     out << "index" << "\t" << "center" << "\t" << "north" << "\t" << "sorth" << "\t" << "east" << "\t" << "west" << "\t" 
         << "point1" << "\t" << "point2" << "\t" << "point3" << "\t" << "point4" << "\t" << "point5" << "\t" << "point6" << "\t" 
-        << "max means" << "\t" << "max variance"
+        << "max means" << "\t" << "max variance" << "\t\t" << "bhw" << "\t" << "asca" << "\t" << "gamma" << "\t" << "lamma" 
         << std::endl;
 
     int image_index = 0;
-    fs::directory_iterator end_iterator;
-    for (fs::directory_iterator iter(path); iter != end_iterator; ++iter)
+    auto dir_list = GetDirList(path);
+    for (auto sub_dir : dir_list)
     {
-        if (!fs::is_regular_file(iter->status()) || iter->path().filename().extension() != ".raw")
+        auto file_list = GetFileList(sub_dir);
+        for (int i = 0; i < file_list.size(); ++i)
         {
-            continue;
+            if (i > 66 && i < 79)
+            {
+                fp = fopen(file_list.at(i).c_str(), "rb");
+                fread(image, sizeof(float), image_size, fp);
+                fclose(fp);
+
+                for (int v = 0; v < image_size; ++v)
+                {
+                    image_bin[v] += image[v];
+                }
+            }
         }
-        std::cout << "current file: " << iter->path() << std::endl;
 
-        fp = fopen(iter->path().c_str(), "rb");
-        fread(image, sizeof(float), image_size, fp);
+        for (int v = 0; v < image_size; ++v)
+        {
+            image_bin[v] /= 12;
+        }
+
+        // sava the binned memory
+        std::experimental::filesystem::path curr_file(file_list.at(0));
+        auto parent_path = curr_file.parent_path().string();
+        auto pos = std::string(curr_file.parent_path()).rfind('/');
+        const std::string bin_image_file_name = parent_path.substr(pos);
+        const std::string save_path = "./out001/" + bin_image_file_name + ".raw";
+
+        // according the bin_image_file_name calculate the coef, bhw, asca, gamma, lambda
+        auto [bhw_coef, asca_coef, gamma_coef, lambda_coef] = GetCoef(bin_image_file_name);
+
+        std::cout << "bhw: " << bhw_coef<< ", asca:" << asca_coef << ", gamma: " << gamma_coef << ", lambda: " << lambda_coef << std::endl;
+
+        fp = fopen(save_path.c_str(), "wb");
+        fwrite(image_bin, sizeof(float), image_size, fp);
         fclose(fp);
-
+        
         image_index++;
-        auto res = CalculateROI(image, voxel_num_x, 300);
+        auto res = CalculateROI(image_bin, voxel_num_x, 300);
 
         // max distance ceter roi with the round 4 roi
         float max_means = std::abs(res.at(0).first - res.at(1).first);
@@ -274,18 +373,22 @@ void CT_ImageUniform(const std::string path)
             << res.at(8).first << "\t" 
             << res.at(9).first << "\t" 
             << res.at(10).first << "\t"
-            << max_means << "\t" << means_variance << "\t"
+            << max_means << "\t" << means_variance << "\t\t"
+            << bhw_coef << "\t" << asca_coef << "\t" << gamma_coef << "\t" << lambda_coef << "\t"
             << std::endl;
     }
     out.close();
 
     delete[] image;
     image = nullptr;
+    delete[] image_bin;
+    image_bin = nullptr;
 }
 
 int main(int argc, char **argv)
 {
-    const std::string path = "/home/nv/gaojunbao/data/20220630/result/bhw_0.8_asca_1.0_gamma_0.01_lambda_0.5/";
+    const std::string path = "/home/nv/gaojunbao/data/20220630/result/";
+    
     CT_ImageUniform(path);
 
     return 0;
